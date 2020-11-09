@@ -1,0 +1,39 @@
+defmodule Permutation do
+  def permutations([]), do: []
+  def permutations(list) when length(list) == 1, do: [list]
+
+  def permutations(list) do
+    n = length(list) - 1
+    Enum.flat_map(0..n, fn index ->
+      value = Enum.at(list, index)
+      permutations(List.delete_at(list, index))
+      |> Enum.map &([value | &1])
+    end)
+  end
+end
+
+defmodule Solution do
+
+  lines_count = IO.gets('')
+  {lines_count, _} = Integer.parse(lines_count)
+
+  for _ <- 1..lines_count do 
+    input_str = IO.gets('')
+    input_str = String.trim(input_str)
+    input_list = String.codepoints(input_str)
+
+    permutations = Permutation.permutations(input_list)
+    permutations = Enum.map(permutations, fn(x) -> Enum.join(x) end)
+    permutations = Enum.sort(permutations)
+    permutations = Enum.reverse(permutations)
+       
+    s_index = Enum.find_index(permutations, fn(x) -> x == input_str end)
+    
+    if s_index == 0 do
+      IO.puts "no answer"
+    else
+      IO.puts Enum.at(permutations, s_index - 1) 
+    end 
+  end
+
+end
